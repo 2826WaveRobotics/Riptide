@@ -22,23 +22,28 @@ void Robot::AutonomousPeriodic()
 }
 void Robot::TeleopInit(){
 
+
+
 }
 
 void Robot::TeleopPeriodic() {
 	while (IsOperatorControl() && IsEnabled()) {
-
+		drive->driveBase->SetSafetyEnabled(1);
+		//drive->SetControlLoopsOn(1);
 		if(!oi->getDebugJoystick2()->GetRawButton(5))
 		{
-			drive->driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(2), oi->getDriverJoystick()->GetRawAxis(4), false); // drive
-
+			drive->driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(1), oi->getDriverJoystick()->GetRawAxis(4)); // drive
 		}
 		else
 		{
-		drive->Riptide(oi->getDriverJoystick()->GetRawAxis(2), oi->getDriverJoystick()->GetRawAxis(4), oi->getDriverJoystick()->GetRawButton(6));
+			drive->Riptide(oi->getDriverJoystick()->GetRawAxis(1), oi->getDriverJoystick()->GetRawAxis(4), oi->getDriverJoystick()->GetRawButton(6));
+
+
+			//drive->driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(1), oi->getDriverJoystick()->GetRawAxis(4)); // drive
 		}
 
-	Wait(kUpdatePeriod); // Wait 5ms for the next update.
-	}
+	Wait(.005); // Wait 5ms for the next update.
+}
 }
 void Robot::DisabledInit()
 {

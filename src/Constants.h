@@ -1,6 +1,6 @@
 class Constants{
 public:
-const double c_wheelDiameter = 3.5;
+const double c_wheelDiameter = 6;
 // Motors
 
 const double c_leftDrivePwmA = 5;
@@ -21,11 +21,11 @@ const double c_ballRangerPort = 5;
 const double c_conveyorBallSensorPort = 4;
 
 // Digital sensors
-const double c_bumpSensorPort = 1;
-const double c_leftEncoderPortA = 2;
-const double c_leftEncoderPortB = 3;
-const double c_rightEncoderPortA = 4;
-const double c_rightEncoderPortB = 5;
+const double c_bumpSensorPort = 5;
+const double c_leftEncoderPortA = 0;
+const double c_leftEncoderPortB = 1;
+const double c_rightEncoderPortA = 2;
+const double c_rightEncoderPortB = 3;
 const double c_shooterEncoderPortA = 6;
 const double c_shooterEncoderPortB = 7;
 

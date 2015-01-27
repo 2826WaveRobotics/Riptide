@@ -7,19 +7,20 @@ Utils* Drive::utils = 0;
 
 Drive::Drive()
 {
-	left1 = new CANTalon(1);
-	left2 = new CANTalon(2);
+	left1 = new CANTalon(0);
+	left2 = new CANTalon(1);
 
-	right1 = new CANTalon(3),
-			right2 = new CANTalon(4),
+	right1 = new CANTalon(2),
+	right2 = new CANTalon(3),
 
-			driveBase = new RobotDrive(left1, left2, right1, right2);
+	driveBase = new RobotDrive(left1, left2, right1, right2);
+	driveBase->SetExpiration(.1);
 
-	leftEncoder = new Encoder(1,2);
-	rightEncoder = new Encoder(3,4);
+	leftEncoder = new Encoder(0,1);
+	rightEncoder = new Encoder(2,3);
 	ResetEncoders();
 
-	gyro = new Gyro(1);
+	gyro = new Gyro(0);
 	ResetGyro();
 
 	shifter = new Solenoid(1);
@@ -28,8 +29,8 @@ Drive::Drive()
 	utils = new Utils();
 }
 void Drive::SetPower(double left, double right) {
-  left = utils->PwmLimit(left);
-  right = utils->PwmLimit(right);
+//  left = utils->PwmLimit(left); // makes sure the values are within the accepted -1 to 1 range
+//  right = utils->PwmLimit(right);
 
   left1->Set(left);
   left2->Set(-left); //reverse 550				//check to see if our motors are inverted
@@ -47,15 +48,15 @@ void Drive::SetHighGear(bool toHigh){
 void Drive::SetLinearPower(double left, double right) {
 	double linearLeft=Linearize(left);
 	double linearRight=Linearize(right);
-	linearLeft = (linearLeft > 1.0) ? 1.0 : (linearLeft < -1.0) ? -1.0 : linearLeft;
+	linearLeft = (linearLeft > 1.0) ? 1.0 : (linearLeft < -1.0) ? -1.0 : linearLeft; // if greater than 1, make 1, then if less than -1, make -1, otherwise leave alone
 	linearRight = (linearRight > 1.0) ? 1.0 : (linearRight < -1.0) ? -1.0 : linearRight;
 	SetPower(linearLeft, linearRight);
 }
 double Drive::Linearize(double x) {
-  if (fabs(x) < 0.01 ) {
+  if (fabs(x) < 0.01 ) { // get rid of deadband
     x = 0.0;
   }
-  if (x > 0.0) {
+  if (x > 0.0) { // so if there was a value to begin with
     return constants->c_linearCoeffA * pow(x, 4) + constants->c_linearCoeffB * pow(x, 3) +
         constants->c_linearCoeffC * pow(x, 2) + constants->c_linearCoeffD * x + constants->c_linearCoeffE;
   } else if (x < 0.0) {
@@ -83,25 +84,25 @@ void Drive::ResetGyro() {
 }
 
 void Drive::Riptide(double throttle, double wheel, bool quickTurn) {
-  bool isQuickTurn = quickTurn;
-  bool isHighGear = m_highGear;
+  bool isQuickTurn = quickTurn; // checks to see if quickturn is active
+  bool isHighGear = m_highGear; //checks gearing
 
-  double wheelNonLinearity;
+  double wheelNonLinearity; //idk what this is yet
 
-  double neg_inertia = wheel - m_old_wheel;
-  m_old_wheel = wheel;
+  double neg_inertia = wheel - m_old_wheel; //sets a change in previous to current value of the "wheel"
+  m_old_wheel = wheel;//stores a value of "wheel"
 
   if (isHighGear) {
-    wheelNonLinearity = constants->c_turnNonlinHigh;
+    wheelNonLinearity = constants->c_turnNonlinHigh;//applies a constant (.9)
     // Apply a sin function that's scaled to make it feel better.
-    wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);
-    wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);
+    wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);//sin(pi/2 * const * turn value
+    wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);//twice
   } else {
     wheelNonLinearity = constants->c_turnNonlinLow;
     // Apply a sin function that's scaled to make it feel better.
     wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);
     wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);
-    wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);
+    wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);//three times. the const is .8
   }
 
   double left_pwm, right_pwm, overPower;
@@ -111,11 +112,11 @@ void Drive::Riptide(double throttle, double wheel, bool quickTurn) {
   float linear_power;
 
   // Negative inertia!
-  static double neg_inertia_accumulator = 0.0;
+  static double neg_inertia_accumulator = 0.0;//reset that
   double neg_inertia_scalar;
   if (isHighGear) {
-    neg_inertia_scalar = constants->c_negInertiaHigh;
-    sensitivity = constants->c_senseHigh;
+    neg_inertia_scalar = constants->c_negInertiaHigh;//5
+    sensitivity = constants->c_senseHigh;//1.2
   } else {
     if (wheel * neg_inertia > 0) {
       neg_inertia_scalar = constants->c_negInertiaLowMore;
@@ -190,6 +191,7 @@ void Drive::Riptide(double throttle, double wheel, bool quickTurn) {
 
   printf("left pwm: %f right pwm: %f\n", left_pwm, right_pwm);
   SetLinearPower(left_pwm, right_pwm);
+
 }
 void Drive::SetControlLoopsOn(bool on){
   m_controlLoops = on;
