@@ -27,8 +27,15 @@ void Robot::TeleopInit(){
 void Robot::TeleopPeriodic() {
 	while (IsOperatorControl() && IsEnabled()) {
 
-		//drive->driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(2), oi->getDriverJoystick()->GetRawAxis(4), false); // drive
+		if(!oi->getDebugJoystick2()->GetRawButton(5))
+		{
+			drive->driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(2), oi->getDriverJoystick()->GetRawAxis(4), false); // drive
+
+		}
+		else
+		{
 		drive->Riptide(oi->getDriverJoystick()->GetRawAxis(2), oi->getDriverJoystick()->GetRawAxis(4), oi->getDriverJoystick()->GetRawButton(6));
+		}
 
 	Wait(kUpdatePeriod); // Wait 5ms for the next update.
 	}
