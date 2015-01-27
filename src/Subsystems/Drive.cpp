@@ -29,8 +29,8 @@ Drive::Drive()
 	utils = new Utils();
 }
 void Drive::SetPower(double left, double right) {
-//  left = utils->PwmLimit(left); // makes sure the values are within the accepted -1 to 1 range
-//  right = utils->PwmLimit(right);
+  left = utils->PwmLimit(left); // makes sure the values are within the accepted -1 to 1 range
+  right = utils->PwmLimit(right);
 
   left1->Set(left);
   left2->Set(-left); //reverse 550				//check to see if our motors are inverted
