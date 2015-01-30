@@ -4,6 +4,7 @@
 #include "WPILib.h"
 #include "Constants.h"
 #include "Utils.h"
+#include "OI.h"
 
 class Drive
 {
@@ -11,6 +12,7 @@ public:
 	Drive();
 	static Constants *constants;
 	static Utils *utils;
+	static OI *oi;
 	void SetPower(double power);
 	RobotDrive* driveBase;
 

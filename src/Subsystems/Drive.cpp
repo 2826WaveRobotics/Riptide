@@ -4,6 +4,7 @@
 
 Constants* Drive::constants = 0;
 Utils* Drive::utils = 0;
+OI* Drive::oi = 0;
 
 Drive::Drive()
 {
@@ -27,16 +28,21 @@ Drive::Drive()
 	SetHighGear(true);
 	constants = new Constants();
 	utils = new Utils();
+	oi = new OI();
 }
 void Drive::SetPower(double left, double right) {
   left = utils->PwmLimit(left); // makes sure the values are within the accepted -1 to 1 range
   right = utils->PwmLimit(right);
 
-  left1->Set(left);
-  left2->Set(-left); //reverse 550				//check to see if our motors are inverted
-  right1->Set(-right);
-  right2->Set(right); //reverse 550s
-}
+  std::cout << left << "\t\t" << right << std::endl;
+	//driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(1), oi->getDriverJoystick()->GetRawAxis(4)); // drive
+	driveBase->SetLeftRightMotorOutputs(left, right);
+//
+//  left1->Set(left);
+//  left2->Set(-left); //reverse 550				//check to see if our motors are inverted
+//  right1->Set(-right);
+//  right2->Set(right); //reverse 550s
+} //
 void Drive::ResetEncoders(){
 	leftEncoder->Reset();
 	rightEncoder->Reset();

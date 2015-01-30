@@ -27,8 +27,8 @@ void Robot::TeleopInit(){
 }
 
 void Robot::TeleopPeriodic() {
+	drive->driveBase->SetSafetyEnabled(1);
 	while (IsOperatorControl() && IsEnabled()) {
-		drive->driveBase->SetSafetyEnabled(1);
 		//drive->SetControlLoopsOn(1);
 		if(!oi->getDebugJoystick2()->GetRawButton(5))
 		{
@@ -36,9 +36,7 @@ void Robot::TeleopPeriodic() {
 		}
 		else
 		{
-			drive->Riptide(oi->getDriverJoystick()->GetRawAxis(1), oi->getDriverJoystick()->GetRawAxis(4), oi->getDriverJoystick()->GetRawButton(6));
-
-
+			drive->Riptide(oi->getDriverJoystick()->GetRawAxis(1), -(oi->getDriverJoystick()->GetRawAxis(4)), oi->getDriverJoystick()->GetRawButton(6));
 			//drive->driveBase->ArcadeDrive(oi->getDriverJoystick()->GetRawAxis(1), oi->getDriverJoystick()->GetRawAxis(4)); // drive
 		}
 
